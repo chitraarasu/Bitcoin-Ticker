@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'price_screen.dart';
 
 const List<String> currenciesList = [
   'AUD',
   'BRL',
   'CAD',
-  'CNY',
+  // 'CNY',
   'EUR',
   'GBP',
   'HKD',
@@ -28,9 +29,11 @@ const List<String> currenciesList = [
 const List<String> cryptoList = ['BTC', 'ETH', 'LTC'];
 
 const coinAPIURL = 'https://rest.coinapi.io/v1/exchangerate';
-const apiKey = 'YOUR-API-KEY-HERE';
+const apiKey = 'Use Your AppID';//Use Your AppID
 
 class CoinData {
+  var statusCode;
+  PriceScreen ps = PriceScreen();
   Future getCoinData(String selectedCurrency) async {
     Map<String, String> cryptoPrices = {};
     for (String crypto in cryptoList) {
@@ -43,7 +46,7 @@ class CoinData {
         cryptoPrices[crypto] = price.toStringAsFixed(0);
       } else {
         print(response.statusCode);
-        throw 'Problem with the get request';
+        statusCode = response.statusCode;
       }
     }
     return cryptoPrices;

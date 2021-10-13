@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'coin_data.dart';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, exit;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,6 +11,27 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'AUD';
+
+  showAlert() {
+    Alert(
+      context: context,
+      type: AlertType.error,
+      title: "Error",
+      desc: "  Check Your Internet Connection And Try Again Tomorrow.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Exit",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            exit(0);
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
 
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -58,11 +80,16 @@ class _PriceScreenState extends State<PriceScreen> {
   void getData() async {
     isWaiting = true;
     try {
+      var sC = CoinData().statusCode;
       var data = await CoinData().getCoinData(selectedCurrency);
-      isWaiting = false;
-      setState(() {
-        coinValues = data;
-      });
+      if (sC == 200) {
+        isWaiting = false;
+        setState(() {
+          coinValues = data;
+        });
+      } else {
+        showAlert();
+      }
     } catch (e) {
       print(e);
     }
